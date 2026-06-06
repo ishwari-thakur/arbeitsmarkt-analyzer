@@ -15,7 +15,9 @@ Analyzes thousands of German job listings to give insights no job board provides
 | Feature | Description | Status |
 |---|---|---|
 | 📊 Job scraper | Scrapes live listings from Bundesagentur für Arbeit API | ✅ Done |
-| 🧠 NLP skill extractor | Extracts required skills from job descriptions | ⏳ Planned |
+| 📈 EDA & Visualizations | City, company, region analysis with charts | ✅ Done |
+| 🖥️ Streamlit Dashboard | Interactive dashboard with filters | ✅ Done |
+| 🧠 NLP skill extractor | Extracts required skills from job descriptions | 🚧 Building |
 | 💰 Salary predictor | Predicts salary by role + city using ML | ⏳ Planned |
 | 🔴 Engpassberufe checker | Flags shortage occupations (visa fast-track) | ⏳ Planned |
 | 🇩🇪 Language reality score | Real German level required — not just the filter | ⏳ Planned |

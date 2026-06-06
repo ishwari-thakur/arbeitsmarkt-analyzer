@@ -67,25 +67,14 @@ def parse_job(job):
     """
     Extracts relevant fields from a single job listing.
     """
-    # Extract employment types (Arbeitszeitmodelle)
-    employment_types = job.get("arbeitszeitmodelle", [])
-    if isinstance(employment_types, list):
-        employment_type = ", ".join(employment_types) if employment_types else "N/A"
-    else:
-        employment_type = str(employment_types)
-
-    # Extract job ID correctly
-    job_id = job.get("hashId") or job.get("refnr") or "N/A"
-
     return {
         "title": job.get("beruf", "N/A"),
         "company": job.get("arbeitgeber", "N/A"),
         "location": job.get("arbeitsort", {}).get("ort", "N/A"),
         "region": job.get("arbeitsort", {}).get("region", "N/A"),
-        "employment_type": employment_type,
-        "job_id": job_id,
+        "employment_type": job.get("arbeitszeitmodelle", "N/A"),
         "posted_date": job.get("eintrittsdatum", "N/A"),
-        "apply_url": f"https://www.arbeitsagentur.de/jobsuche/jobdetail/{job_id}",
+        "job_id": job.get("hashId", "N/A"),
         "scraped_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 

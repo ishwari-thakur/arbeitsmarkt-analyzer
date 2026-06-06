@@ -18,7 +18,7 @@ st.set_page_config(
 # ─── Load Data ────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/jobs_raw.csv")
+    df = pd.read_csv("data/jobs_with_skills.csv")
     df['location'] = df['location'].fillna('Unknown')
     df['region'] = df['region'].fillna('Unknown')
     df['posted_date'] = pd.to_datetime(df['posted_date'], errors='coerce')
@@ -94,6 +94,39 @@ ax.set_ylabel("Number of Jobs")
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig)
+
+# ─── Skills Analysis ──────────────────────────────────────
+st.markdown("---")
+st.subheader("🧠 Most Demanded Skills in Germany")
+
+import json
+from collections import Counter
+
+skill_counts = Counter()
+for skills_json in df['skills'].dropna():
+    try:
+        skills_dict = json.loads(skills_json)
+        for category, skills in skills_dict.items():
+            for skill in skills:
+                skill_counts[skill] += 1
+    except:
+        pass
+
+if skill_counts:
+    top_skills = pd.DataFrame(
+        skill_counts.most_common(15),
+        columns=['Skill', 'Count']
+    )
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    sns.barplot(x='Count', y='Skill', data=top_skills, palette='Purples_r', ax=ax)
+    ax.set_xlabel("Number of Jobs Requiring This Skill")
+    ax.set_ylabel("")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+    st.markdown("**💡 Insight:** These are the skills German companies are actively hiring for right now.")
+
 
 # ─── Job Listings Table ───────────────────────────────────
 st.markdown("---")

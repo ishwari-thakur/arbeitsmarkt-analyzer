@@ -2,7 +2,7 @@
 
 > End-to-end Data Science + AI tool for the German job market — built for international students and job seekers.
 
-![Status](https://img.shields.io/badge/Status-Phase%201%20%F0%9F%9A%A7%20In%20Progress-orange)
+![Status](https://img.shields.io/badge/Status-Phase%202%20%F0%9F%9A%A7%20In%20Progress-orange)
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green)
 

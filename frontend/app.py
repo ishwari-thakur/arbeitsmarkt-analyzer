@@ -7,6 +7,26 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys
+import json
+from collections import Counter
+sys.path.append('.')
+from models.salary_predictor import predict_salary
+
+REGION_MULTIPLIER = {
+    "Bayern": 1.15,
+    "Baden-Württemberg": 1.12,
+    "Hamburg": 1.10,
+    "Berlin": 1.05,
+    "Hessen": 1.08,
+    "Nordrhein-Westfalen": 1.02,
+    "Niedersachsen": 0.97,
+    "Rheinland-Pfalz": 0.96,
+    "Schleswig-Holstein": 0.95,
+    "Sachsen": 0.90,
+    "Thüringen": 0.88,
+    "Unknown": 1.00
+}
 
 # ─── Page Config ──────────────────────────────────────────
 st.set_page_config(
@@ -18,7 +38,7 @@ st.set_page_config(
 # ─── Load Data ────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/jobs_with_skills.csv")
+    df = pd.read_csv("data/jobs_final.csv")
     df['location'] = df['location'].fillna('Unknown')
     df['region'] = df['region'].fillna('Unknown')
     df['posted_date'] = pd.to_datetime(df['posted_date'], errors='coerce')
@@ -94,6 +114,56 @@ ax.set_ylabel("Number of Jobs")
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig)
+
+
+# ─── Salary Predictions ───────────────────────────────────
+st.markdown("---")
+st.subheader("💰 Predicted Salary Ranges by Region")
+
+salary_df = filtered_df.groupby('region').agg(
+    avg_min=('predicted_min', 'mean'),
+    avg_max=('predicted_max', 'mean'),
+    job_count=('title', 'count')
+).reset_index().sort_values('avg_min', ascending=False).head(10)
+
+fig, ax = plt.subplots(figsize=(12, 5))
+bars = ax.barh(salary_df['region'],
+               salary_df['avg_max'] - salary_df['avg_min'],
+               left=salary_df['avg_min'],
+               color='#2ecc71', alpha=0.7, height=0.5)
+
+ax.set_xlabel("Salary Range (€)")
+ax.set_ylabel("Region")
+ax.xaxis.set_major_formatter(
+    plt.FuncFormatter(lambda x, p: f"€{x/1000:.0f}k")
+)
+
+for i, row in salary_df.iterrows():
+    ax.text(row['avg_max'] + 500, 
+            list(salary_df['region']).index(row['region']),
+            f"€{row['avg_min']/1000:.0f}k-€{row['avg_max']/1000:.0f}k",
+            va='center', fontsize=9)
+
+plt.tight_layout()
+st.pyplot(fig)
+
+# Salary calculator
+st.markdown("#### 🔮 Salary Calculator")
+col1, col2, col3 = st.columns(3)
+with col1:
+    calc_title = st.selectbox("Job Title", [
+        "Data Scientist", "Data Engineer", "ML Engineer",
+        "Informatiker/in", "Statistiker/in"
+    ])
+with col2:
+    calc_region = st.selectbox("Region", list(REGION_MULTIPLIER.keys()))
+with col3:
+    calc_company = st.text_input("Company (optional)", "")
+
+result = predict_salary(calc_title, calc_region, calc_company)
+st.success(f"**Predicted Salary: {result['label']}** (mid: €{result['mid']:,}/year)")
+st.caption(f"Region factor: {result['region_factor']}x · Company factor: {result['company_factor']}x")
+
 
 # ─── Skills Analysis ──────────────────────────────────────
 st.markdown("---")

@@ -5,6 +5,7 @@
 ![Status](https://img.shields.io/badge/Status-Phase%202%20%F0%9F%9A%A7%20In%20Progress-orange)
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-arbeitsmarkt--analyzer.streamlit.app-red?logo=streamlit)](https://arbeitsmarkt-analyzer.streamlit.app)
 
 ---
 
@@ -22,6 +23,7 @@ Analyzes thousands of German job listings to give insights no job board provides
 | 🔴 Engpassberufe checker | Flags shortage occupations (visa fast-track) | ⏳ Planned |
 | 🇩🇪 Language reality score | Real German level required — not just the filter | ⏳ Planned |
 | 📄 CV match score | Upload CV → get ranked job matches (free) | ⏳ Planned |
+
 
 ---
 

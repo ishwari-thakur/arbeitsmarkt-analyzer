@@ -12,6 +12,8 @@ import json
 from collections import Counter
 sys.path.append('.')
 from models.salary_predictor import predict_salary
+import warnings
+warnings.filterwarnings('ignore')
 
 REGION_MULTIPLIER = {
     "Bayern": 1.15,
@@ -36,7 +38,7 @@ st.set_page_config(
 )
 
 # ─── Load Data ────────────────────────────────────────────
-@st.cache_data
+@st.cache_resource
 def load_data():
     df = pd.read_csv("data/jobs_final.csv")
     df['location'] = df['location'].fillna('Unknown')

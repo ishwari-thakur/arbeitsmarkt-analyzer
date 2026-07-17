@@ -199,6 +199,96 @@ if skill_counts:
 
     st.markdown("**💡 Insight:** These are the skills German companies are actively hiring for right now.")
 
+# ─── Engpassberufe Checker ────────────────────────────────
+st.markdown("---")
+st.subheader("🔴 Engpassberufe — Shortage Occupation Checker")
+st.caption("Check if your target role qualifies for EU Blue Card fast-track")
+
+col1, col2 = st.columns(2)
+with col1:
+    check_title = st.text_input("Job title to check", "Data Scientist", key="engpass_title")
+with col2:
+    check_salary = st.number_input(
+        "Expected salary (€/year)",
+        min_value=20000, max_value=200000,
+        value=65000, step=1000,
+        key="engpass_salary_input"
+    )
+
+from models.engpassberufe_checker import check_engpassberuf
+engpass_result = check_engpassberuf(check_title, check_salary)
+
+if engpass_result['is_engpassberuf']:
+    st.success(f"🔴 Engpassberuf — Category: {engpass_result['category']}")
+    st.info(engpass_result['visa_info'])
+    st.metric("Chancenkarte Bonus Points", f"+{engpass_result['chancenkarte_points']}")
+else:
+    st.warning("⚪ Standard occupation")
+    st.info(engpass_result['visa_info'])
+
+# ─── Language Reality Score ───────────────────────────────
+st.markdown("---")
+st.subheader("🇩🇪 Language Reality Score")
+st.caption("Find out the REAL German level required — not just what the filter says")
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    lang_title = st.text_input("Job title", "Data Scientist", key="lang_title_input")
+with col2:
+    lang_company = st.text_input("Company", "BMW Group", key="lang_company_input")
+with col3:
+    lang_region = st.selectbox(
+        "Region", list(REGION_MULTIPLIER.keys()), key="lang_region_input"
+    )
+
+from models.language_detector import detect_language_requirement
+lang_result = detect_language_requirement(lang_title, lang_company, lang_region)
+
+col1, col2 = st.columns(2)
+with col1:
+    st.metric("Required German Level", lang_result['label'])
+with col2:
+    if lang_result['international_friendly']:
+        st.success("🌍 International friendly — English sufficient")
+    else:
+        st.error("🇩🇪 German required for this role")
+
+if lang_result['reasons']:
+    st.caption(f"Why: {lang_result['reasons'][0]}")
+
+# ─── CV Match Score ───────────────────────────────────────
+st.markdown("---")
+st.subheader("📄 CV Match Score")
+st.caption("Free alternative to LinkedIn Premium — paste your CV and find your best matches")
+
+cv_input = st.text_area(
+    "Paste your CV text here",
+    height=200,
+    placeholder="Paste your skills, experience, education...",
+    key="cv_text_input"
+)
+
+if st.button("🎯 Find My Best Job Matches", key="cv_match_btn") and cv_input:
+    with st.spinner("Matching your CV against 125 German jobs..."):
+        from models.cv_matcher import match_cv_to_jobs
+        matches = match_cv_to_jobs(cv_input, df, top_n=10)
+
+    st.success("✅ Found your top 10 matches!")
+
+    for i, (_, row) in enumerate(matches.iterrows(), 1):
+        score = row['match_percentage']
+        emoji = "🟢" if score >= 70 else "🟡" if score >= 50 else "🔴"
+
+        with st.expander(
+            f"{emoji} #{i} — {score}% match | {row['title']} @ {row['company']}"
+        ):
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"📍 **Location:** {row['location']}, {row['region']}")
+                st.write(f"💰 **Salary:** {row.get('salary_label', 'N/A')}")
+            with col2:
+                st.write(f"🎯 **Match Score:** {score}%")
+                st.markdown(f"[Apply Now →]({row.get('apply_url', '#')})")
 
 # ─── Job Listings Table ───────────────────────────────────
 st.markdown("---")

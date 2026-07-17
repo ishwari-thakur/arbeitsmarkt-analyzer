@@ -20,9 +20,9 @@ Analyzes thousands of German job listings to give insights no job board provides
 | 🖥️ Streamlit Dashboard | Interactive dashboard with filters | ✅ Done |
 | 🧠 NLP skill extractor | Extracts required skills from job descriptions | ✅ Done |
 | 💰 Salary predictor | Predicts salary by role + city using ML | ✅ Done |
-| 🔴 Engpassberufe checker | Flags shortage occupations (visa fast-track) | ⏳ Planned |
-| 🇩🇪 Language reality score | Real German level required — not just the filter | ⏳ Planned |
-| 📄 CV match score | Upload CV → get ranked job matches (free) | ⏳ Planned |
+| 🔴 Engpassberufe checker | Flags shortage occupations (visa fast-track) | ✅ Done |
+| 🇩🇪 Language reality score | Real German level required — not just the filter | ✅ Done |
+| 📄 CV match score | Upload CV → get ranked job matches (free) | ✅ Done |
 
 
 ---
